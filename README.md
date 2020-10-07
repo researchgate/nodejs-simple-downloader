@@ -57,6 +57,8 @@ nsd nodejs /path/
 
 ## How to build
 
+> Requires go version 1.15 or newer
+
 - Checkout project
 - Run `go mod tidy`
 - Run `cd nsd && go build`
