@@ -32,6 +32,9 @@ someone who hasn't worked with `go` before. So bear in mind that the code is pro
 structured and written in the best way possible. If you have suggestions feel
 free to open PRs. I'm happy to learn how it can be done better.
 
+The other decision to go with `go` is that having a single executable without a requirement for a
+runtime, interpreter or package manager should make the setup easier in the end.
+
 ## Usage
 
 #### With specific version
