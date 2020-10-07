@@ -22,7 +22,7 @@ care of maintaining the local Node.js installation without involvement of system
 ### Are there more details on how the above mentioned setup looks like?
 
 Not yet. We are currently only planing on migrating away from 
-[researchgate/nodejs-installer](https://github.com/researchgate/nodejs-installer/tree/researchgate`)
+[researchgate/nodejs-installer](https://github.com/researchgate/nodejs-installer/tree/researchgate)
 and haven't finalized how it will work in the end. Once this is done we will share more details.
 
 ### Okay, but why golang?
