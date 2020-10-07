@@ -12,9 +12,9 @@ more, all these solutions focus on installing nodejs globally and making it
 available in the environment. In contrast what `node-simple-downloader` does is
 simply download and extract the desired nodejs version to a specified directory.
 How the downloaded NodeJS is then used is totally up to the user. The use-case
-that triggered the creation of this tool is that our nodejs applications all
+that triggered the creation of this tool is that all our nodejs applications
 specify themselves which version of NodeJS they run and also take care of NodeJS
-updates. This allows app developers to take care of maintaining the NodeJS
+updates. This allows app developers to take care of maintaining the local NodeJS
 installation without involvement of system operators.
 
 ### Okay, but why golang?
