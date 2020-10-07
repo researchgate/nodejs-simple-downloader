@@ -86,7 +86,7 @@ func prepareFlags() (err error) {
 
 func init() {
 	nodejsCommand.Flags().StringVarP(&version, "version", "v", "", "Which version to install")
-	nodejsCommand.Flags().StringVarP(&fromFile, "from-file", "r", "", "Reads the version to be installed from an file. Either specify the filename or if empty it will try to read from .nvmrc file.")
+	nodejsCommand.Flags().StringVarP(&fromFile, "from-file", "r", "", "Reads the version to be installed from a file. Either specify the filename or if empty it will try to read from .nvmrc file.")
 	nodejsCommand.MarkFlagFilename("from-file")
 	rootCmd.AddCommand(nodejsCommand)
 }
