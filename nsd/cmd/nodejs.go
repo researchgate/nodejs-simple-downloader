@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
 	"github.com/mholt/archiver/v3"
+	Checksum "github.com/researchgate/nodejs-simple-downloader/nsd/checksum"
 	Download "github.com/researchgate/nodejs-simple-downloader/nsd/download"
 	NodeJs "github.com/researchgate/nodejs-simple-downloader/nsd/nodejs"
 
@@ -29,27 +31,46 @@ var (
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			path := args[0]
+			downloadPath := args[0]
 
 			err = prepareFlags()
 			if err != nil {
 				return
 			}
 
-			url := fmt.Sprintf(string(NodeJs.CurrentURL), version, version, NodeJs.CurrentArch, NodeJs.CurrentExtension)
-			fmt.Printf("Downloading NodeJS from %s\n", url)
-			tmpFile, err := Download.File(url)
+			nodeURL := fmt.Sprintf(string(NodeJs.CurrentURL)+"node-v%s-%s.%s", version, version, NodeJs.CurrentArch, NodeJs.CurrentExtension)
+			nodeFilePath, err := Download.File(nodeURL)
 			if err != nil {
 				return
 			}
-			defer os.Remove(tmpFile.Name())
+			defer os.Remove(nodeFilePath)
 
-			err = os.RemoveAll(path)
+			checksumURL := fmt.Sprintf(string(NodeJs.CurrentURL)+"SHASUMS256.txt", version)
+			checkusmFilePath, err := Download.File(checksumURL)
+			if err != nil {
+				return
+			}
+			defer os.Remove(checkusmFilePath)
+
+			checksum, err := Checksum.CalculateSHA256(nodeFilePath)
 			if err != nil {
 				return
 			}
 
-			err = archiver.Unarchive(tmpFile.Name(), path)
+			verified, err := Checksum.Verify(checksum, path.Base(nodeFilePath), checkusmFilePath)
+			if err != nil {
+				return
+			}
+			if !verified {
+				return errors.New("Checksum mismatch. Aborting")
+			}
+
+			err = os.RemoveAll(downloadPath)
+			if err != nil {
+				return
+			}
+
+			err = archiver.Unarchive(nodeFilePath, downloadPath)
 			if err != nil {
 				return
 			}
