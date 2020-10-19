@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math"
 	"net/http"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 
@@ -17,6 +19,7 @@ import (
 type WriteCounter struct {
 	Current uint64
 	Total   uint64
+	URL     string
 }
 
 func (wc *WriteCounter) Write(p []byte) (int, error) {
@@ -31,19 +34,27 @@ func (wc WriteCounter) printProgress() {
 	// the remaining characters by filling it with spaces
 	fmt.Printf("\r%s", strings.Repeat(" ", 35))
 
-	// Return again and print current status of download
+	percent := math.Min(100, (float64(wc.Current)/float64(wc.Total))*float64(100))
 	// We use the humanize package to print the bytes in a meaningful way (e.g. 10 MB)
-	fmt.Printf("\r%.0f%% (%s/%s)", (float64(wc.Current)/float64(wc.Total))*float64(100), humanize.Bytes(wc.Current), humanize.Bytes(wc.Total))
+	current := humanize.Bytes(wc.Current)
+	total := current
+	if wc.Total > 0 {
+		total = humanize.Bytes(wc.Total)
+	}
+
+	// Return again and print current status of download
+	fmt.Printf("\r%.0f%% (%s/%s) Downloading %s ...", percent, current, total, wc.URL)
 }
 
 // File will download a url to a local file. It's efficient because it will
 // write as it downloads and not load the whole file into memory.
-func File(url string) (tmpFile *os.File, err error) {
+func File(url string) (filePath string, err error) {
 	// Create the file
-	tmpFile, err = ioutil.TempFile("", "node-simple-downloader.*.tar.gz")
+	tmpFile, err := ioutil.TempFile("", "*#"+path.Base(url))
 	if err != nil {
 		return
 	}
+	filePath = tmpFile.Name()
 	defer tmpFile.Close()
 
 	// Get the data
@@ -64,7 +75,7 @@ func File(url string) (tmpFile *os.File, err error) {
 	downloadSize := uint64(size)
 
 	// Create our progress reporter and pass it to be used alongside our writer
-	counter := &WriteCounter{Total: downloadSize}
+	counter := &WriteCounter{Total: downloadSize, URL: url}
 	// Write the body to file
 	_, err = io.Copy(tmpFile, io.TeeReader(resp.Body, counter))
 
