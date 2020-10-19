@@ -17,7 +17,11 @@ func Verify(checksum string, fileName string, nodeChecksumFilePath string) (veri
 	}
 	defer file.Close()
 
-	realFileName := strings.Split(fileName, "#")[1]
+	realFileName := fileName
+	// We create TempFiles in the format `<random>#<filename>`
+	if strings.Contains(fileName, "#") {
+		realFileName = strings.Split(fileName, "#")[1]
+	}
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
