@@ -40,19 +40,19 @@ runtime, interpreter or package manager should make the setup easier in the end.
 #### With specific version
 
 ```bash
-nsd nodejs /path/ --version 12.15.0
+nsd download /path/ --version 12.15.0
 ```
 
 #### With specific version from file
 
 ```bash
-nsd nodejs /path/ --from-file ./node_version
+nsd download /path/ --from-file ./node_version
 ```
 
 #### No specific version, will try reading from CWD/.nvmrc
 
 ```bash
-nsd nodejs /path/
+nsd download /path/
 ```
 
 ## How to build

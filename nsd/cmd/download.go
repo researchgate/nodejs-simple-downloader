@@ -18,10 +18,10 @@ import (
 )
 
 var (
-	version       string
-	fromFile      string
-	nodejsCommand = &cobra.Command{
-		Use:   "nodejs [path]",
+	version         string
+	fromFile        string
+	downloadCommand = &cobra.Command{
+		Use:   "download [path]",
 		Short: "Download nodejs to specific folder",
 		Long:  "",
 		Args: func(cmd *cobra.Command, args []string) error {
@@ -84,7 +84,9 @@ func prepareFlags() (err error) {
 	if version != "" && fromFile != "" {
 		return errors.New("cannot figure out which version to install. Please only specify one of --version or --from-file")
 	}
+	versionSpecified := true
 	if version == "" && fromFile == "" {
+		versionSpecified = false
 		fromFile = ".nvmrc"
 	}
 
@@ -96,6 +98,9 @@ func prepareFlags() (err error) {
 
 		content, err := ioutil.ReadFile(fromFile)
 		if err != nil {
+			if !versionSpecified {
+				return errors.New("No version specified and could not find any version file in the current directory")
+			}
 			return err
 		}
 
@@ -106,8 +111,8 @@ func prepareFlags() (err error) {
 }
 
 func init() {
-	nodejsCommand.Flags().StringVarP(&version, "version", "v", "", "Which version to install")
-	nodejsCommand.Flags().StringVarP(&fromFile, "from-file", "r", "", "Reads the version to be installed from a file. Either specify the filename or if empty it will try to read from .nvmrc file.")
-	nodejsCommand.MarkFlagFilename("from-file")
-	rootCmd.AddCommand(nodejsCommand)
+	downloadCommand.Flags().StringVarP(&version, "version", "v", "", "Which version to install")
+	downloadCommand.Flags().StringVarP(&fromFile, "from-file", "r", "", "Reads the version to be installed from a file. Either specify the filename or if empty it will try to read from .nvmrc file.")
+	downloadCommand.MarkFlagFilename("from-file")
+	rootCmd.AddCommand(downloadCommand)
 }
