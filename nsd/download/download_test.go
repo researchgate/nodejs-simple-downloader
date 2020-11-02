@@ -54,3 +54,16 @@ func TestDownloadZip(t *testing.T) {
 		t.Errorf("File() returned path to file, but file does not exist")
 	}
 }
+
+func TestDownloadInvalidFile(t *testing.T) {
+	router := mux.NewRouter()
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./testdata/")))
+
+	server := httptest.NewServer(router)
+	defer server.Close()
+
+	_, err := File(server.URL + "/notexist.zip")
+	if err == nil {
+		t.Errorf("File() did not error")
+	}
+}

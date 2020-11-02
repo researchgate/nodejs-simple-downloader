@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"math"
 	"net/http"
-	"os"
 	"path"
 	"strconv"
 	"strings"
@@ -62,12 +61,12 @@ func File(url string) (filePath string, err error) {
 	if err != nil {
 		return
 	}
-	if resp.StatusCode != http.StatusOK {
-		fmt.Println(resp.Status)
-		os.Exit(1)
-		// exit if not ok
-	}
+
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("URL '%s' returned error code %s", url, resp.Status)
+	}
 
 	// the Header "Content-Length" will let us know
 	// the total file size to download
