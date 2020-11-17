@@ -1,6 +1,8 @@
 before:
   hooks:
     - go mod download
+archives:
+  - format: binary
 builds:
   - id: nsd
     dir: nsd
@@ -31,6 +33,6 @@ changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^chore:'
-      - '^test:'
+      - '^docs'
+      - '^chore'
+      - '^test'
