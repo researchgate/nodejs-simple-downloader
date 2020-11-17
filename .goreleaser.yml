@@ -1,8 +1,6 @@
 before:
   hooks:
     - go mod download
-archives:
-  - format: binary
 builds:
   - id: nsd
     dir: nsd
@@ -19,6 +17,7 @@ builds:
       - goos: linux
         goarch: 386
 archives:
+  - format: binary
   - replacements:
       darwin: Darwin
       linux: Linux
