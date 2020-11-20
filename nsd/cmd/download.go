@@ -70,7 +70,23 @@ var (
 				return
 			}
 
-			err = archiver.Unarchive(nodeFilePath, downloadPath)
+			switch NodeJs.CurrentExtension {
+			case NodeJs.Zip:
+				zip := archiver.NewZip()
+				zip.StripComponents = 1
+				err = zip.Unarchive(nodeFilePath, downloadPath)
+			case NodeJs.TarXz:
+				tar := archiver.NewTarXz()
+				tar.StripComponents = 1
+				err = tar.Unarchive(nodeFilePath, downloadPath)
+			case NodeJs.TarGz:
+				tar := archiver.NewTarGz()
+				tar.StripComponents = 1
+				err = tar.Unarchive(nodeFilePath, downloadPath)
+			default:
+				return errors.New("Invalid archive format. Aborting")
+			}
+
 			if err != nil {
 				return
 			}
