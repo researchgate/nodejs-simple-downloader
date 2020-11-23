@@ -3,8 +3,6 @@
 This is a tool that simply downloads the desired version of Node.js and unpacks
 it.
 
-> :warning: **This tool is in a very early stage and is not polished for easy usage yet.**
-
 ## FAQ
 
 ### Why?
