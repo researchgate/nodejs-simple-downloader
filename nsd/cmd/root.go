@@ -8,7 +8,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:          "nsd",
-	Short:        "A simple cli downloader for nodejs, npm and yarn",
+	Short:        "A simple cli downloader for Node.js",
 	Long:         "",
 	SilenceUsage: true,
 }
