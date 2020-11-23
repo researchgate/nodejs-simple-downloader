@@ -35,22 +35,32 @@ runtime, interpreter or package manager should make the setup easier in the end.
 
 ## Usage
 
+### Node.js
+
 #### With specific version
 
 ```bash
-nsd download /path/ --version 12.15.0
+nsd nodejs /path/ --version 12.15.0
 ```
 
 #### With specific version from file
 
 ```bash
-nsd download /path/ --from-file ./node_version
+nsd nodejs /path/ --from-file ./node_version
 ```
 
 #### No specific version, will try reading from CWD/.nvmrc
 
 ```bash
-nsd download /path/
+nsd nodejs /path/
+```
+
+### Yarn (Currently only v1 supported)
+
+#### With specific version
+
+```bash
+nsd yarn /path/ --version 1.22.5
 ```
 
 ## How to build

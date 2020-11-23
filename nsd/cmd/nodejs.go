@@ -18,11 +18,11 @@ import (
 )
 
 var (
-	version         string
-	fromFile        string
-	downloadCommand = &cobra.Command{
-		Use:   "download [path]",
-		Short: "Download nodejs to specific folder",
+	nodejsVersion         string
+	nodejsVersionfromFile string
+	nodejsCommand         = &cobra.Command{
+		Use:   "nodejs [path]",
+		Short: "Download Node.js to specific folder",
 		Long:  "",
 		Args: func(cmd *cobra.Command, args []string) error {
 			if len(args) < 1 {
@@ -33,19 +33,19 @@ var (
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			downloadPath := args[0]
 
-			err = prepareFlags()
+			err = prepareNodejsFlags()
 			if err != nil {
 				return
 			}
 
-			nodeURL := fmt.Sprintf(string(NodeJs.CurrentURL)+"node-v%s-%s.%s", version, version, NodeJs.CurrentArch, NodeJs.CurrentExtension)
+			nodeURL := fmt.Sprintf(string(NodeJs.CurrentURL)+"node-v%s-%s.%s", nodejsVersion, nodejsVersion, NodeJs.CurrentArch, NodeJs.CurrentExtension)
 			nodeFilePath, err := Download.File(nodeURL)
 			if err != nil {
 				return
 			}
 			defer os.Remove(nodeFilePath)
 
-			checksumURL := fmt.Sprintf(string(NodeJs.CurrentURL)+"SHASUMS256.txt", version)
+			checksumURL := fmt.Sprintf(string(NodeJs.CurrentURL)+"SHASUMS256.txt", nodejsVersion)
 			checkusmFilePath, err := Download.File(checksumURL)
 			if err != nil {
 				return
@@ -96,23 +96,23 @@ var (
 	}
 )
 
-func prepareFlags() (err error) {
-	if version != "" && fromFile != "" {
+func prepareNodejsFlags() (err error) {
+	if nodejsVersion != "" && nodejsVersionfromFile != "" {
 		return errors.New("cannot figure out which version to install. Please only specify one of --version or --from-file")
 	}
 	versionSpecified := true
-	if version == "" && fromFile == "" {
+	if nodejsVersion == "" && nodejsVersionfromFile == "" {
 		versionSpecified = false
-		fromFile = ".nvmrc"
+		nodejsVersionfromFile = ".nvmrc"
 	}
 
-	if fromFile != "" {
-		fromFile, err = filepath.Abs(fromFile)
+	if nodejsVersionfromFile != "" {
+		nodejsVersionfromFile, err = filepath.Abs(nodejsVersionfromFile)
 		if err != nil {
 			return
 		}
 
-		content, err := ioutil.ReadFile(fromFile)
+		content, err := ioutil.ReadFile(nodejsVersionfromFile)
 		if err != nil {
 			if !versionSpecified {
 				return errors.New("No version specified and could not find any version file in the current directory")
@@ -120,15 +120,15 @@ func prepareFlags() (err error) {
 			return err
 		}
 
-		version = strings.Trim(string(content), " \n\r")
+		nodejsVersion = strings.Trim(string(content), " \n\r")
 	}
 
 	return
 }
 
 func init() {
-	downloadCommand.Flags().StringVarP(&version, "version", "v", "", "Which version to install")
-	downloadCommand.Flags().StringVarP(&fromFile, "from-file", "r", "", "Reads the version to be installed from a file. Either specify the filename or if empty it will try to read from .nvmrc file.")
-	downloadCommand.MarkFlagFilename("from-file")
-	rootCmd.AddCommand(downloadCommand)
+	nodejsCommand.Flags().StringVarP(&nodejsVersion, "version", "v", "", "Which version to install")
+	nodejsCommand.Flags().StringVarP(&nodejsVersionfromFile, "from-file", "r", "", "Reads the version to be installed from a file. Either specify the filename or if empty it will try to read from .nvmrc file.")
+	nodejsCommand.MarkFlagFilename("from-file")
+	rootCmd.AddCommand(nodejsCommand)
 }
