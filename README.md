@@ -45,14 +45,10 @@ nsd nodejs /path/ --version 12.15.0
 
 #### With specific version from file
 
-```bash
-nsd nodejs /path/ --from-file ./node_version
-```
-
-#### No specific version, will try reading from CWD/.nvmrc
+`package.json` (exact version in engines field) and `.nvmrc` are currently supported.
 
 ```bash
-nsd nodejs /path/
+nsd nodejs /path/ --version-from-file ./.nvmrc
 ```
 
 ### Yarn (Currently only v1 supported)
@@ -69,6 +65,14 @@ This will download the single javascript file and move it into the download dire
 
 ```bash
 nsd yarn /path/ --version 1.22.5 --single-file yarn
+```
+
+#### With specific version from file
+
+`package.json` (exact version in engines field) is currently supported.
+
+```bash
+nsd nodejs /path/ --version-from-file ./package.json
 ```
 
 ## How to build

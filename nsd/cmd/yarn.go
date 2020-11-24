@@ -9,14 +9,16 @@ import (
 	"github.com/mholt/archiver/v3"
 	Checksum "github.com/researchgate/nodejs-simple-downloader/nsd/checksum"
 	Download "github.com/researchgate/nodejs-simple-downloader/nsd/download"
+	Yarn "github.com/researchgate/nodejs-simple-downloader/nsd/yarn"
 
 	"github.com/spf13/cobra"
 )
 
 var (
-	yarnVersion string
-	singleFile  string
-	yarnCommand = &cobra.Command{
+	yarnVersion         string
+	yarnVersionfromFile string
+	singleFile          string
+	yarnCommand         = &cobra.Command{
 		Use:   "yarn [path]",
 		Short: "Download yarn to specific folder",
 		Long:  "",
@@ -98,8 +100,12 @@ var (
 )
 
 func prepareYarnFlags() (err error) {
-	if yarnVersion == "" {
-		return errors.New("No version specified")
+	if (yarnVersion != "" && yarnVersionfromFile != "") || (yarnVersion == "" && yarnVersionfromFile == "") {
+		return errors.New("cannot figure out which version to install. Please specify one of --version or --from-file")
+	}
+
+	if yarnVersionfromFile != "" {
+		yarnVersion, err = Yarn.VersionFromFile(yarnVersionfromFile)
 	}
 
 	return
@@ -108,5 +114,6 @@ func prepareYarnFlags() (err error) {
 func init() {
 	yarnCommand.Flags().StringVarP(&yarnVersion, "version", "v", "", "Which version to install")
 	yarnCommand.Flags().StringVarP(&singleFile, "single-file", "s", "", "Download only the single file distribution from yarn and save with the supplied name in the download path")
+	yarnCommand.Flags().StringVarP(&yarnVersionfromFile, "version-from-file", "f", "", "Reads the version to be installed from a file. Supported is only package.json")
 	rootCmd.AddCommand(yarnCommand)
 }

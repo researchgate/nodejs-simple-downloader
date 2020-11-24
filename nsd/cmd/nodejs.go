@@ -3,11 +3,8 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
-	"path/filepath"
-	"strings"
 
 	"github.com/mholt/archiver/v3"
 	Checksum "github.com/researchgate/nodejs-simple-downloader/nsd/checksum"
@@ -97,30 +94,12 @@ var (
 )
 
 func prepareNodejsFlags() (err error) {
-	if nodejsVersion != "" && nodejsVersionfromFile != "" {
-		return errors.New("cannot figure out which version to install. Please only specify one of --version or --from-file")
-	}
-	versionSpecified := true
-	if nodejsVersion == "" && nodejsVersionfromFile == "" {
-		versionSpecified = false
-		nodejsVersionfromFile = ".nvmrc"
+	if (nodejsVersion != "" && nodejsVersionfromFile != "") || (nodejsVersion == "" && nodejsVersionfromFile == "") {
+		return errors.New("cannot figure out which version to install. Please specify one of --version or --from-file")
 	}
 
 	if nodejsVersionfromFile != "" {
-		nodejsVersionfromFile, err = filepath.Abs(nodejsVersionfromFile)
-		if err != nil {
-			return
-		}
-
-		content, err := ioutil.ReadFile(nodejsVersionfromFile)
-		if err != nil {
-			if !versionSpecified {
-				return errors.New("No version specified and could not find any version file in the current directory")
-			}
-			return err
-		}
-
-		nodejsVersion = strings.Trim(string(content), " \n\r")
+		nodejsVersion, err = NodeJs.VersionFromFile(nodejsVersionfromFile)
 	}
 
 	return
@@ -128,7 +107,7 @@ func prepareNodejsFlags() (err error) {
 
 func init() {
 	nodejsCommand.Flags().StringVarP(&nodejsVersion, "version", "v", "", "Which version to install")
-	nodejsCommand.Flags().StringVarP(&nodejsVersionfromFile, "from-file", "r", "", "Reads the version to be installed from a file. Either specify the filename or if empty it will try to read from .nvmrc file.")
+	nodejsCommand.Flags().StringVarP(&nodejsVersionfromFile, "version-from-file", "f", "", "Reads the version to be installed from a file. Supported are currently package.json, .nvmrc, .node-version and .n-node-version.")
 	nodejsCommand.MarkFlagFilename("from-file")
 	rootCmd.AddCommand(nodejsCommand)
 }
