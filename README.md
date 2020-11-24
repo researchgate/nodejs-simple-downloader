@@ -57,10 +57,18 @@ nsd nodejs /path/
 
 ### Yarn (Currently only v1 supported)
 
-#### With specific version
+#### Full distribution
 
 ```bash
 nsd yarn /path/ --version 1.22.5
+```
+
+#### Single file distribution
+
+This will download the single javascript file and move it into the download directory with the name supplied to `--single-file`
+
+```bash
+nsd yarn /path/ --version 1.22.5 --single-file yarn
 ```
 
 ## How to build

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 
 	"github.com/mholt/archiver/v3"
 	Checksum "github.com/researchgate/nodejs-simple-downloader/nsd/checksum"
@@ -14,6 +15,7 @@ import (
 
 var (
 	yarnVersion string
+	singleFile  string
 	yarnCommand = &cobra.Command{
 		Use:   "yarn [path]",
 		Short: "Download yarn to specific folder",
@@ -27,14 +29,17 @@ var (
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			downloadPath := args[0]
 
-			// https://github.com/yarnpkg/yarn/releases/download/v'.$version.'/yarn-v'.$version.'.tar.gz
-
 			err = prepareYarnFlags()
 			if err != nil {
 				return
 			}
 
-			yarnURL := fmt.Sprintf("https://github.com/yarnpkg/yarn/releases/download/v%s/yarn-v%s.tar.gz", yarnVersion, yarnVersion)
+			yarnURL := fmt.Sprintf("https://github.com/yarnpkg/yarn/releases/download/v%s/yarn-", yarnVersion)
+			if singleFile != "" {
+				yarnURL = fmt.Sprintf(yarnURL+"%s.js", yarnVersion)
+			} else {
+				yarnURL = fmt.Sprintf(yarnURL+"v%s.tar.gz", yarnVersion)
+			}
 			yarnFilePath, err := Download.File(yarnURL)
 			if err != nil {
 				return
@@ -65,9 +70,23 @@ var (
 				return
 			}
 
-			tar := archiver.NewTarGz()
-			tar.StripComponents = 1
-			err = tar.Unarchive(yarnFilePath, downloadPath)
+			if singleFile != "" {
+				err = os.MkdirAll(downloadPath, 0755)
+				if err != nil {
+					return
+				}
+
+				destinationFilePath := path.Join(downloadPath, singleFile)
+				err = os.Rename(yarnFilePath, destinationFilePath)
+				if err != nil {
+					return err
+				}
+				err = os.Chmod(destinationFilePath, 0755)
+			} else {
+				tar := archiver.NewTarGz()
+				tar.StripComponents = 1
+				err = tar.Unarchive(yarnFilePath, downloadPath)
+			}
 
 			if err != nil {
 				return
@@ -88,5 +107,6 @@ func prepareYarnFlags() (err error) {
 
 func init() {
 	yarnCommand.Flags().StringVarP(&yarnVersion, "version", "v", "", "Which version to install")
+	yarnCommand.Flags().StringVarP(&singleFile, "single-file", "s", "", "Download only the single file distribution from yarn and save with the supplied name in the download path")
 	rootCmd.AddCommand(yarnCommand)
 }
