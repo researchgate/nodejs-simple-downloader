@@ -2,8 +2,9 @@ package checksum
 
 import (
 	"fmt"
-	"golang.org/x/crypto/openpgp"
 	"os"
+
+	"golang.org/x/crypto/openpgp"
 )
 
 // VerifyGPG is cool
@@ -31,12 +32,10 @@ func VerifyGPG(signatureFilePath string, keyFilePath string, tarFilePath string)
 	if err != nil {
 		return
 	}
-	entity, err := openpgp.CheckArmoredDetachedSignature(keyring, tarFile, signatureFile)
+	_, err = openpgp.CheckArmoredDetachedSignature(keyring, tarFile, signatureFile)
 	if err != nil {
 		return
 	}
-
-	fmt.Println(entity)
 
 	return
 }
