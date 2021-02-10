@@ -1,4 +1,4 @@
-# nodejs-simple-downloader [![Build Status](https://travis-ci.com/researchgate/nodejs-simple-downloader.svg?branch=master)](https://travis-ci.com/researchgate/nodejs-simple-downloader)
+# nodejs-simple-downloader
 
 This is a tool that simply downloads the desired version of Node.js and unpacks
 it.
