@@ -3,6 +3,9 @@
 This is a tool that simply downloads the desired version of Node.js and unpacks
 it.
 
+> ⚠️ &nbsp; **Node.JS Apple Silicon support —**
+> Due to the lack of official binaries for `darwin-arm64` (Apple Silicon) architectures for Node.JS versions before 16.0.0, this tool **does not** support downloading any `darwin-arm64` binaries. Instead, it will download the binaries for the `darwin-x64` (Intel Macs) architecture regardless of if the requested version supports Apple Silicon.
+
 ## FAQ
 
 ### Why?
